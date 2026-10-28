@@ -1,0 +1,49 @@
+---
+description: HomeHub universal agent rules — architecture, workflow, prohibitions
+alwaysApply: true
+---
+
+# HomeHub core rules
+
+Read [AGENTS.md](../../AGENTS.md) and [docs/architecture.md](../../docs/architecture.md) before coding.
+
+## Workflow
+
+- Inspect neighboring files and the target module’s existing patterns before adding files or new abstractions.
+- Reuse existing components, services, error types, and test helpers.
+- One task, minimal diff: no unrelated refactors or repo-wide reformatting.
+- Business logic for family data lives in **API services**; mobile implements display, offline cache, and sync — never duplicate rules (dates, permissions, dedupe, totals) on both sides.
+
+## Naming (all languages)
+
+- DB tables/columns: `snake_case`, plural tables (`grocery_lists`).
+- Python modules/files: `snake_case.py`; classes `PascalCase`; functions `snake_case`.
+- TS/React Native files: `PascalCase.tsx` for components, `camelCase.ts` for hooks/utils, `kebab-case` only if the folder already uses it.
+- API paths: kebab-case plural (`/api/v1/grocery-lists`).
+- Error codes: `SCREAMING_SNAKE` string in JSON `error.code`.
+
+## Errors and logging
+
+- API JSON shape: `{ "error": { "code", "message", "details"? } }` — never expose stack traces to clients.
+- Log server errors with structured context (request id, user id, family id); never log passwords, tokens, or OAuth secrets.
+- Mobile: user-safe messages; log details in dev only.
+
+## Documentation
+
+- Change to architecture, sync, auth, or public API → update `docs/architecture.md` and/or `docs/adr/`, and OpenAPI if present.
+
+## Tests and completion
+
+- New behavior → automated tests. Bug fix → regression test when practical.
+- Task not done until lint, typecheck, and affected tests pass; run commands from AGENTS.md.
+
+## Dependencies
+
+- Follow [docs/standards/dependencies.md](../../docs/standards/dependencies.md). No new packages without approval criteria met.
+
+## Hard prohibitions
+
+- Duplicated business logic across mobile and API.
+- Cross-family data access without explicit service checks.
+- Calendar import that overwrites existing HomeHub events.
+- New microservices, GraphQL, or server SQLite.

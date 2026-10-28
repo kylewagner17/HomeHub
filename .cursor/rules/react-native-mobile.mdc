@@ -1,0 +1,46 @@
+---
+description: HomeHub React Native mobile app conventions
+globs: apps/mobile/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React Native mobile standards
+
+TypeScript `strict`. Primary client; offline-first with local DB + sync.
+
+## Layout
+
+- `apps/mobile/src/features/<domain>/` — screens, feature hooks, feature-only components.
+- `apps/mobile/src/components/` — shared UI (buttons, lists, layout).
+- `apps/mobile/src/sync/` — outbox, sync engine, API client; no UI imports here.
+- `apps/mobile/src/db/` — local schema, migrations, repositories.
+- `apps/mobile/src/navigation/` — navigators and linking.
+
+Feature folder names match API modules: `calendar`, `groceries`, `maintenance`, etc.
+
+## Patterns
+
+- Functional components; colocate feature hooks (`useGroceryList.ts`) with the feature.
+- API calls go through a single client module under `sync/` or `api/` — no raw `fetch` scattered in screens.
+- Permissions: hide/disable UI by role for UX; assume server may reject — handle 403 gracefully.
+- Dates: store/transmit ISO UTC; format with user/family timezone in UI layer.
+
+## Async and offline
+
+- Mutations that must survive offline → write local DB + outbox; sync when online.
+- Show sync/error state on lists that support realtime family sharing.
+- Exponential backoff for sync retries; do not spin tight loops.
+
+## Errors
+
+- Map API `error.code` to user-visible strings in one place per feature or shared `errors.ts`.
+- No empty `catch` blocks.
+
+## Formatting
+
+- ESLint + Prettier per app config; run before marking task complete.
+
+## Tests
+
+- Pure logic: `apps/mobile/src/**/*.test.ts` colocated or under `apps/mobile/__tests__/`.
+- Prefer testing sync helpers, date math, and reducers without mounting full RN tree unless needed.

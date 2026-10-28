@@ -1,0 +1,41 @@
+# Environment
+.env
+.env.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node / React Native
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.expo/
+.metro-health-check*
+
+# React Native
+apps/mobile/android/app/build/
+apps/mobile/android/.gradle/
+apps/mobile/ios/build/
+apps/mobile/ios/Pods/
+*.jks
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+pgdata/

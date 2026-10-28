@@ -1,0 +1,32 @@
+---
+description: HomeHub testing requirements and file placement
+globs: apps/api/tests/**/*,apps/mobile/**/*.test.ts,apps/mobile/**/*.test.tsx,apps/mobile/__tests__/**/*
+alwaysApply: false
+---
+
+# Testing standards
+
+## Requirements
+
+- **New feature:** at least unit tests for non-trivial logic; integration test for API endpoints that mutate family data.
+- **Bug fix:** add a regression test when reproduction is reasonable without flaky E2E.
+- **Skip tests** only with a comment explaining why (e.g. blocked on harness) — not for convenience.
+
+## Placement
+
+| Kind | Path |
+|------|------|
+| API unit | `apps/api/tests/unit/test_<module>.py` |
+| API integration | `apps/api/tests/integration/test_<flow>.py` |
+| Mobile unit | Colocated `*.test.ts(x)` or `apps/mobile/__tests__/` |
+
+## Practices
+
+- Tests are deterministic: fixed clocks for due dates, recurrence, maintenance intervals.
+- Use factories/fixtures per module; do not copy large JSON blobs across files.
+- Integration tests must isolate tenants — two families, assert no cross-leak.
+- Mock external OAuth/calendar APIs; never hit Google/Microsoft in CI.
+
+## Completion gate
+
+Agents must run the narrowest relevant suite (module tests) at minimum; full API + mobile test commands before claiming done when both stacks change.

@@ -1,0 +1,49 @@
+---
+description: HomeHub Python FastAPI backend conventions
+globs: apps/api/**/*.py
+alwaysApply: false
+---
+
+# Python API standards
+
+Stack: FastAPI, SQLAlchemy 2, Alembic, Pydantic, PostgreSQL. Python 3.12+.
+
+## Layout per domain module (`apps/api/src/homehub/modules/<domain>/`)
+
+| File | Role |
+|------|------|
+| `router.py` | FastAPI routes only — deps, call service, map to response |
+| `service.py` | Use cases; raise domain exceptions |
+| `repository.py` | DB access for this module’s tables |
+| `schemas.py` | Pydantic request/response models |
+| `models.py` | SQLAlchemy ORM models |
+| `exceptions.py` | Module-specific `HomeHubError` subclasses |
+
+Do not query another module’s ORM models from your repository — call that module’s service.
+
+## Async
+
+- Prefer `async def` routes and `async` DB if using async driver; be consistent within the app.
+- No blocking I/O on the event loop (use thread pool or sync worker for CPU-heavy work).
+- Background work: `apps/api/src/homehub/jobs/`, not fire-and-forget in routes without a queue.
+
+## Errors
+
+- Services raise typed exceptions; router maps to HTTP status via centralized handlers in `main.py` or `middleware/errors.py`.
+- Validate input with Pydantic at the boundary only.
+
+## Tenancy and auth
+
+- Every family-scoped service method receives `family_id` and `current_user` (or equivalent) from router deps.
+- Assert membership/role before read or write.
+
+## Formatting and types
+
+- Ruff for lint + format (line length per `pyproject.toml` when present).
+- Type hints on all public service and repository functions.
+
+## Tests
+
+- Unit: `apps/api/tests/unit/` mirroring module path.
+- Integration: `apps/api/tests/integration/` with real PostgreSQL (container or compose).
+- Name files `test_<module>.py`; functions `test_<behavior>`.
