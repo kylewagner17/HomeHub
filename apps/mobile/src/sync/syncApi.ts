@@ -1,3 +1,4 @@
+/** Authenticated sync API calls (Bearer token from Keychain). */
 import type { SyncPingResponseDto, SyncPullResponseDto, SyncPushResponseDto } from '@homehub/shared';
 
 import { API_BASE_URL } from '../config/api';

@@ -1,3 +1,5 @@
+"""FastAPI dependencies: DB session per request and JWT-authenticated user."""
+
 from collections.abc import Generator
 from typing import Annotated
 from uuid import UUID
@@ -31,6 +33,7 @@ def get_current_user(
     db: Annotated[Session, Depends(get_db)],
     authorization: Annotated[str | None, Header()] = None,
 ) -> User:
+    """Resolve Bearer JWT to a User row; used by all protected routes."""
     if not authorization or not authorization.lower().startswith("bearer "):
         raise HomeHubError("UNAUTHORIZED", "Missing or invalid authorization", status_code=401)
     token = authorization.split(" ", 1)[1].strip()

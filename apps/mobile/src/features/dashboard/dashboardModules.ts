@@ -1,3 +1,4 @@
+/** Role-based dashboard placeholders; only groceries is wired in M2. */
 import type { FamilyRole } from '@homehub/shared';
 
 export type DashboardModule = {

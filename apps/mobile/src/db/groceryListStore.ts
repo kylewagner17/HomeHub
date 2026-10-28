@@ -6,6 +6,7 @@ function rowToLocal(row: Record<string, unknown>): LocalGroceryList {
     id: String(row.id),
     familyId: String(row.family_id),
     name: String(row.name),
+    selectedStoreId: row.selected_store_id ? String(row.selected_store_id) : null,
     revision: Number(row.revision),
     updatedAt: String(row.updated_at),
     deleted: Number(row.deleted) === 1,
@@ -24,10 +25,11 @@ export function listLocalGroceryLists(familyId: string): LocalGroceryList[] {
 export function upsertLocalGroceryList(list: LocalGroceryList): void {
   const db = getDatabase();
   db.execute(
-    `INSERT INTO grocery_lists (id, family_id, name, revision, updated_at, deleted)
-     VALUES (?, ?, ?, ?, ?, ?)
+    `INSERT INTO grocery_lists (id, family_id, name, selected_store_id, revision, updated_at, deleted)
+     VALUES (?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET
        name = excluded.name,
+       selected_store_id = excluded.selected_store_id,
        revision = excluded.revision,
        updated_at = excluded.updated_at,
        deleted = excluded.deleted`,
@@ -35,6 +37,7 @@ export function upsertLocalGroceryList(list: LocalGroceryList): void {
       list.id,
       list.familyId,
       list.name,
+      list.selectedStoreId,
       list.revision,
       list.updatedAt,
       list.deleted ? 1 : 0,

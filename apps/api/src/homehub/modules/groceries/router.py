@@ -7,6 +7,7 @@ from homehub.modules.families.repository import FamiliesRepository
 from homehub.modules.groceries.repository import GroceryListsRepository
 from homehub.modules.groceries.schemas import (
     CreateGroceryListRequest,
+    GroceryEstimateResponse,
     GroceryListResponse,
     UpdateGroceryListRequest,
 )
@@ -46,3 +47,14 @@ def update_grocery_list(
     result = _service(db).update_list(user, family_id, list_id, body)
     db.commit()
     return result
+
+
+@router.get("/{list_id}/estimate", response_model=GroceryEstimateResponse)
+def estimate_grocery_list(
+    family_id: UUID,
+    list_id: UUID,
+    store_id: UUID,
+    user: CurrentUser,
+    db: DbSession,
+) -> GroceryEstimateResponse:
+    return _service(db).estimate_list(user, family_id, list_id, store_id)

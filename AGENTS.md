@@ -25,6 +25,7 @@ Canonical architecture: [docs/architecture.md](docs/architecture.md).
 1. Inspect existing code in the target module and mirror its patterns.
 2. Do not introduce a new pattern (state library, folder layout, error type) without checking the rest of the repo; prefer extending what exists.
 3. Scope changes to the task: no drive-by refactors or unrelated formatting.
+4. **Comments:** Follow [.cursor/rules/code-comments.mdc](.cursor/rules/code-comments.mdc) — explain complex or non-obvious code; avoid line-by-line narration.
 
 ## Where to put new artifacts
 
@@ -52,6 +53,7 @@ Canonical architecture: [docs/architecture.md](docs/architecture.md).
 - [ ] Docs updated if architecture, sync protocol, auth, or public API changed.
 - [ ] No new dependencies without [docs/standards/dependencies.md](docs/standards/dependencies.md) approval process.
 - [ ] No secrets committed; `.env.example` updated if new config keys.
+- [ ] New/changed code includes appropriate comments per `code-comments.mdc` (complex areas documented; no comment spam).
 
 ## Commands (run from repo root when tooling exists)
 
@@ -68,6 +70,7 @@ If scripts are added under `scripts/` or root `package.json`, prefer those docum
 | Rule file | Scope |
 |-----------|--------|
 | `.cursor/rules/homehub-core.mdc` | Always — workflow, prohibitions, docs, deps |
+| `.cursor/rules/code-comments.mdc` | Always — comment quality when implementing code |
 | `.cursor/rules/python-api.mdc` | `apps/api/**/*.py` |
 | `.cursor/rules/react-native-mobile.mdc` | `apps/mobile/**/*.{ts,tsx}` |
 | `.cursor/rules/testing.mdc` | Tests in API and mobile |

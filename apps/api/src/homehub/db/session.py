@@ -7,6 +7,7 @@ from sqlalchemy.pool import StaticPool
 
 
 def create_db_engine(database_url: str) -> Engine:
+    # In-memory SQLite (tests) needs StaticPool so all connections share one DB.
     if database_url.startswith("sqlite"):
         return create_engine(
             database_url,

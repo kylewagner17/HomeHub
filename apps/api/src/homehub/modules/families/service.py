@@ -17,11 +17,14 @@ from homehub.modules.families.schemas import (
 
 
 class FamiliesService:
+    """Family (node) lifecycle: create, join via invite, roles (ADR-002)."""
+
     def __init__(self, families_repo: FamiliesRepository, auth_repo: AuthRepository) -> None:
         self._families_repo = families_repo
         self._auth_repo = auth_repo
 
     def create_family(self, user: User, body: CreateFamilyRequest) -> FamilyResponse:
+        # Creator becomes admin; joiners default to member (see ADR-002).
         invite_code = secrets.token_urlsafe(6).upper().replace("-", "")[:10]
         family = self._families_repo.create_family(body.name, invite_code)
         self._families_repo.add_membership(user.id, family.id, FamilyRole.admin)

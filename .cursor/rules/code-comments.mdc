@@ -1,0 +1,32 @@
+---
+description: Comment new code clearly — explain complexity, not every line
+alwaysApply: true
+---
+
+# Code comments (implementation)
+
+When you **add or materially change** application code, include comments that help the next reader. Match the tone and density of neighboring files in the same module.
+
+## Do comment
+
+- **Why** a non-obvious choice was made (sync conflict handling, tenancy checks, offline outbox ordering).
+- **Protocols and invariants** (revision rules, idempotency, server-wins cases) — point to ADR when applicable.
+- **Multi-step flows** — brief block comment above sync push/pull, migration upgrade, or auth pipeline sections.
+- **Public module boundaries** — one-line docstring on services and non-trivial exported functions (Python `"""..."""`; TS on exported functions/types when behavior isn’t obvious from names).
+
+## Do not comment
+
+- Obvious getters, simple CRUD wiring, or code that duplicates the name (`// set name to name`).
+- Every line inside a loop or standard React render boilerplate.
+- Narrating syntax the language already expresses.
+
+## Balance
+
+- Prefer **fewer, higher-value** comments over noise.
+- If logic is hard to explain in one short comment, **simplify the code** or document in `docs/adr/` and link from a single comment.
+- Do not comment instead of tests for behavior; comments explain intent, tests prove behavior.
+
+## Language notes
+
+- **Python:** Module docstring optional for tiny files; service methods that encode business rules should have a one-line docstring or a short comment above the tricky branch.
+- **TypeScript:** Use `//` or block comments sparingly in `sync/`, `db/`, and domain hooks; UI components only where UX/state logic is non-obvious.

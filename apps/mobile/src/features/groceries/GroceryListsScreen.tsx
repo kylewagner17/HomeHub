@@ -1,8 +1,12 @@
+/**
+ * M2 grocery lists: reads/writes local SQLite; sync pushes outbox then pulls server changes.
+ */
 import type { FamilyMembershipSummary } from '@homehub/shared';
 import React, { useCallback, useState } from 'react';
 import {
   Button,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -16,9 +20,10 @@ import { createLocalGroceryList, runSync } from '../../sync/syncEngine';
 type Props = {
   membership: FamilyMembershipSummary;
   onBack: () => void;
+  onOpenList: (listId: string) => void;
 };
 
-export function GroceryListsScreen({ membership, onBack }: Props) {
+export function GroceryListsScreen({ membership, onBack, onOpenList }: Props) {
   const [lists, setLists] = useState(() => listLocalGroceryLists(membership.family_id));
   const [newName, setNewName] = useState('');
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
@@ -64,16 +69,17 @@ export function GroceryListsScreen({ membership, onBack }: Props) {
           value={newName}
           onChangeText={setNewName}
         />
-        <Button title="Add" onPress={handleAdd} />
+        <Button title="Add new list" onPress={handleAdd} />
       </View>
       <FlatList
+        style={styles.list}
         data={lists}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <Pressable style={styles.card} onPress={() => onOpenList(item.id)}>
             <Text style={styles.cardTitle}>{item.name}</Text>
             <Text style={styles.cardMeta}>rev {item.revision}</Text>
-          </View>
+          </Pressable>
         )}
         ListEmptyComponent={<Text style={styles.empty}>No lists yet — add one above</Text>}
       />
@@ -95,6 +101,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
   },
+  list: { flex: 1 },
   card: {
     padding: 12,
     backgroundColor: '#f4f4f4',

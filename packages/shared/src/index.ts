@@ -46,15 +46,73 @@ export type GroceryListDto = {
   id: string;
   family_id: string;
   name: string;
+  selected_store_id: string | null;
   revision: number;
   updated_at: string;
   deleted_at: string | null;
 };
 
+export type GroceryListItemDto = {
+  id: string;
+  list_id: string;
+  family_id: string;
+  name: string;
+  quantity: string;
+  checked: boolean;
+  staple_id: string | null;
+  revision: number;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+export type GroceryStapleDto = {
+  id: string;
+  family_id: string;
+  name: string;
+  revision: number;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+export type GroceryStoreDto = {
+  id: string;
+  family_id: string;
+  name: string;
+  external_provider: string | null;
+  external_store_id: string | null;
+  address_line: string | null;
+  revision: number;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+export type GroceryStorePriceDto = {
+  id: string;
+  family_id: string;
+  store_id: string;
+  item_name: string;
+  price_cents: number;
+  revision: number;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+export type SyncEntityType =
+  | 'grocery_list'
+  | 'grocery_list_item'
+  | 'grocery_staple'
+  | 'grocery_store'
+  | 'grocery_store_price';
+
 export type SyncPushResultDto = {
   idempotency_key: string;
   status: string;
+  entity_type?: SyncEntityType;
   entity: GroceryListDto | null;
+  grocery_list_item?: GroceryListItemDto | null;
+  grocery_staple?: GroceryStapleDto | null;
+  grocery_store?: GroceryStoreDto | null;
+  grocery_store_price?: GroceryStorePriceDto | null;
 };
 
 export type SyncPushResponseDto = {
@@ -64,6 +122,10 @@ export type SyncPushResponseDto = {
 export type SyncPullResponseDto = {
   server_time: string;
   grocery_lists: GroceryListDto[];
+  grocery_list_items: GroceryListItemDto[];
+  grocery_staples: GroceryStapleDto[];
+  grocery_stores: GroceryStoreDto[];
+  grocery_store_prices: GroceryStorePriceDto[];
 };
 
 export type SyncPingResponseDto = {

@@ -1,3 +1,5 @@
+"""HomeHub LAN API — modular monolith entrypoint and global exception handlers."""
+
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -16,7 +18,7 @@ from homehub.db.session import (
 )
 from homehub.modules.auth.router import router as auth_router
 from homehub.modules.families.router import router as families_router
-from homehub.modules.groceries.router import router as groceries_router
+from homehub.modules.groceries.router import router as groceries_lists_router
 from homehub.modules.sync.router import router as sync_router
 from homehub.schemas.health import HealthResponse
 
@@ -38,7 +40,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="HomeHub API", version=__version__, lifespan=lifespan)
 app.include_router(auth_router, prefix=API_PREFIX)
 app.include_router(families_router, prefix=API_PREFIX)
-app.include_router(groceries_router, prefix=API_PREFIX)
+app.include_router(groceries_lists_router, prefix=API_PREFIX)
 app.include_router(sync_router, prefix=API_PREFIX)
 
 

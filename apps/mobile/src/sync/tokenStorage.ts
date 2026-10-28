@@ -1,3 +1,4 @@
+/** Persist JWT in Keychain so sessions survive app restarts (M1). */
 import * as Keychain from 'react-native-keychain';
 
 const SERVICE = 'homehub.auth';

@@ -1,3 +1,4 @@
+/** HTTP client for auth and family onboarding (sync lives in syncApi.ts). */
 import type { ApiErrorResponse, TokenResponse, UserResponse } from '@homehub/shared';
 
 import { API_BASE_URL } from '../config/api';

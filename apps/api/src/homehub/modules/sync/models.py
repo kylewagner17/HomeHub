@@ -1,3 +1,5 @@
+"""Idempotency keys for POST /sync/push — prevents double-apply on mobile retries."""
+
 import uuid
 from datetime import datetime
 
