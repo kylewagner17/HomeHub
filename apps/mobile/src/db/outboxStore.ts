@@ -1,11 +1,14 @@
+import type { SyncEntityType } from '@homehub/shared';
+
 import { getDatabase } from './database';
 
+/** Pending mutations uploaded via POST /api/v1/sync/push (one row per idempotency_key). */
 export type OutboxMutation = {
   idempotency_key: string;
-  entity_type: 'grocery_list';
+  entity_type: SyncEntityType;
   operation: 'upsert' | 'delete';
   entity_id: string;
-  data: { name?: string; revision: number } | null;
+  data: Record<string, unknown> | null;
 };
 
 export function enqueueOutbox(familyId: string, mutation: OutboxMutation): void {

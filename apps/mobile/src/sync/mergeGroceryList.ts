@@ -1,35 +1,26 @@
 import type { GroceryListDto } from '@homehub/shared';
 
-export type LocalGroceryList = {
+import { mergeByRevision, type RevisionEntity } from './mergeByRevision';
+
+export type LocalGroceryList = RevisionEntity & {
   id: string;
   familyId: string;
   name: string;
-  revision: number;
-  updatedAt: string;
-  deleted: boolean;
+  selectedStoreId: string | null;
 };
 
-export function mergeServerList(local: LocalGroceryList | null, server: GroceryListDto): LocalGroceryList {
-  const serverDeleted = server.deleted_at !== null;
-  if (local === null) {
-    return {
-      id: server.id,
-      familyId: server.family_id,
-      name: server.name,
-      revision: server.revision,
-      updatedAt: server.updated_at,
-      deleted: serverDeleted,
-    };
-  }
-  if (server.revision >= local.revision) {
-    return {
-      id: server.id,
-      familyId: server.family_id,
-      name: server.name,
-      revision: server.revision,
-      updatedAt: server.updated_at,
-      deleted: serverDeleted,
-    };
-  }
-  return local;
+export function mergeServerList(
+  local: LocalGroceryList | null,
+  server: GroceryListDto,
+): LocalGroceryList {
+  const serverLocal: LocalGroceryList = {
+    id: server.id,
+    familyId: server.family_id,
+    name: server.name,
+    selectedStoreId: server.selected_store_id,
+    revision: server.revision,
+    updatedAt: server.updated_at,
+    deleted: server.deleted_at !== null,
+  };
+  return mergeByRevision(local, serverLocal);
 }

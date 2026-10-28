@@ -20,6 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refreshUser = useCallback(async () => {
+    // On cold start, restore session from Keychain token if still valid.
     try {
       const me = await api.fetchMe();
       setUser(me);

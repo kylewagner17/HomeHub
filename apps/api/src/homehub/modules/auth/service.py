@@ -13,6 +13,8 @@ from homehub.modules.families.repository import FamiliesRepository
 
 
 class AuthService:
+    """Registration, login, and profile with embedded family memberships."""
+
     def __init__(self, auth_repo: AuthRepository, families_repo: FamiliesRepository) -> None:
         self._auth_repo = auth_repo
         self._families_repo = families_repo

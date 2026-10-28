@@ -7,6 +7,7 @@ import { useAuth } from '../features/auth/AuthContext';
 import { LoginScreen } from '../features/auth/screens/LoginScreen';
 import { RegisterScreen } from '../features/auth/screens/RegisterScreen';
 import { DashboardScreen } from '../features/dashboard/DashboardScreen';
+import { GroceryListDetailScreen } from '../features/groceries/GroceryListDetailScreen';
 import { GroceryListsScreen } from '../features/groceries/GroceryListsScreen';
 import { OnboardingScreen } from '../features/families/screens/OnboardingScreen';
 import type { AuthStackParamList, MainStackParamList } from './types';
@@ -27,7 +28,20 @@ function MainApp({ membership }: { membership: NonNullable<ReturnType<typeof use
       </MainStack.Screen>
       <MainStack.Screen name="GroceryLists">
         {({ navigation }) => (
-          <GroceryListsScreen membership={membership} onBack={() => navigation.goBack()} />
+          <GroceryListsScreen
+            membership={membership}
+            onBack={() => navigation.goBack()}
+            onOpenList={listId => navigation.navigate('GroceryListDetail', { listId })}
+          />
+        )}
+      </MainStack.Screen>
+      <MainStack.Screen name="GroceryListDetail">
+        {({ navigation, route }) => (
+          <GroceryListDetailScreen
+            membership={membership}
+            listId={route.params.listId}
+            onBack={() => navigation.goBack()}
+          />
         )}
       </MainStack.Screen>
     </MainStack.Navigator>

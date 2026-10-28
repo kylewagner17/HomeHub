@@ -359,6 +359,8 @@ Order emphasizes **foundation → auth/family → vertical slices**; mobile and 
 
 **Acceptance:** Family member sees partner’s changes in near real time; totals update for selected store.
 
+**Status:** Implemented. See [ADR-004](adr/004-grocery-realtime-m3.md). Manual store prices; quantity merge and steppers on list detail; 5s pull sync when online.
+
 ### M4 — Reminders + push
 
 - CRUD, recurrence, backend scheduler, in-app + push delivery.
