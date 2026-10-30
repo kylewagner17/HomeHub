@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from homehub.modules.auth.models import User
+from homehub.modules.auth.models import DevicePushToken, User
 
 
 class AuthRepository:
@@ -22,3 +22,21 @@ class AuthRepository:
         self._session.add(user)
         self._session.flush()
         return user
+
+    def upsert_push_token(self, user_id: UUID, platform: str, token: str) -> DevicePushToken:
+        stmt = select(DevicePushToken).where(
+            DevicePushToken.user_id == user_id,
+            DevicePushToken.platform == platform,
+        )
+        row = self._session.scalar(stmt)
+        if row is None:
+            row = DevicePushToken(user_id=user_id, platform=platform, token=token)
+            self._session.add(row)
+        else:
+            row.token = token
+        self._session.flush()
+        return row
+
+    def list_push_tokens_for_user(self, user_id: UUID) -> list[str]:
+        stmt = select(DevicePushToken.token).where(DevicePushToken.user_id == user_id)
+        return list(self._session.scalars(stmt).all())

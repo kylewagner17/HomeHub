@@ -1,4 +1,4 @@
-/** Role-based dashboard placeholders; only groceries is wired in M2. */
+/** Role-based dashboard placeholders; groceries and reminders wired in M2/M4. */
 import type { FamilyRole } from '@homehub/shared';
 
 export type DashboardModule = {
@@ -17,6 +17,7 @@ const ADMIN_MODULES: DashboardModule[] = [
 const MEMBER_MODULES: DashboardModule[] = [
   { id: 'tasks', title: 'Your tasks' },
   { id: 'calendar', title: 'Your calendar' },
+  { id: 'reminders', title: 'Reminders' },
 ];
 
 export function modulesForRole(role: FamilyRole): DashboardModule[] {

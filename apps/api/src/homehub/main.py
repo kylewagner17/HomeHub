@@ -19,6 +19,7 @@ from homehub.db.session import (
 from homehub.modules.auth.router import router as auth_router
 from homehub.modules.families.router import router as families_router
 from homehub.modules.groceries.router import router as groceries_lists_router
+from homehub.modules.reminders.router import notifications_router, reminders_router
 from homehub.modules.sync.router import router as sync_router
 from homehub.schemas.health import HealthResponse
 
@@ -33,7 +34,14 @@ session_factory = create_session_factory(engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    scheduler = None
+    if settings.reminder_scheduler_enabled:
+        from homehub.jobs.reminder_scheduler import start_reminder_scheduler
+
+        scheduler = start_reminder_scheduler(session_factory)
     yield
+    if scheduler is not None:
+        scheduler.shutdown(wait=False)
     engine.dispose()
 
 
@@ -41,6 +49,8 @@ app = FastAPI(title="HomeHub API", version=__version__, lifespan=lifespan)
 app.include_router(auth_router, prefix=API_PREFIX)
 app.include_router(families_router, prefix=API_PREFIX)
 app.include_router(groceries_lists_router, prefix=API_PREFIX)
+app.include_router(reminders_router, prefix=API_PREFIX)
+app.include_router(notifications_router, prefix=API_PREFIX)
 app.include_router(sync_router, prefix=API_PREFIX)
 
 

@@ -34,3 +34,8 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserResponse
+
+
+class DeviceTokenRequest(BaseModel):
+    platform: str = Field(pattern="^(android|ios)$")
+    token: str = Field(min_length=1, max_length=512)

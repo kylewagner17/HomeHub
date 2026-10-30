@@ -3,6 +3,7 @@ from homehub.core.security import create_access_token, hash_password, verify_pas
 from homehub.modules.auth.models import User
 from homehub.modules.auth.repository import AuthRepository
 from homehub.modules.auth.schemas import (
+    DeviceTokenRequest,
     FamilyMembershipSummary,
     LoginRequest,
     RegisterRequest,
@@ -35,6 +36,9 @@ class AuthService:
 
     def me(self, user: User) -> UserResponse:
         return self._user_response(user)
+
+    def register_device_token(self, user: User, body: DeviceTokenRequest) -> None:
+        self._auth_repo.upsert_push_token(user.id, body.platform, body.token)
 
     def _token_response(self, user: User) -> TokenResponse:
         token = create_access_token(user.id)

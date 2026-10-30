@@ -9,6 +9,6 @@ describe('modulesForRole', () => {
 
   it('shows limited modules for member', () => {
     const modules = modulesForRole('member');
-    expect(modules.map(m => m.id)).toEqual(['tasks', 'calendar']);
+    expect(modules.map(m => m.id)).toEqual(['tasks', 'calendar', 'reminders']);
   });
 });

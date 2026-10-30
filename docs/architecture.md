@@ -367,6 +367,8 @@ Order emphasizes **foundation → auth/family → vertical slices**; mobile and 
 
 **Acceptance:** Reminder fires on device; history retained.
 
+**Status:** Implemented. See [ADR-006](adr/006-reminders-m4.md). APScheduler in API lifespan; in-app notifications via `/notifications`; optional FCM when `FCM_SERVER_KEY` is set.
+
 ### M5 — Maintenance
 
 - Assets, interval-based next due, complete → reschedule, history.

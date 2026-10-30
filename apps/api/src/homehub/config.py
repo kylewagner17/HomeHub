@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     jwt_secret: str = "dev-only-change-me-32-chars-minimum!!"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 60 * 24 * 7
+    fcm_server_key: str | None = None
+    reminder_scheduler_enabled: bool = True
+    reminder_scheduler_interval_seconds: int = 60
 
 
 _settings: Settings | None = None

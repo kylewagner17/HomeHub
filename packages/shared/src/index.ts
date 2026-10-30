@@ -132,3 +132,38 @@ export type SyncPingResponseDto = {
   ok: boolean;
   server_time: string;
 };
+
+export type ReminderRecurrence = 'one_time' | 'daily' | 'weekly' | 'monthly';
+
+export type ReminderDto = {
+  id: string;
+  family_id: string;
+  title: string;
+  body: string | null;
+  assignee_user_id: string | null;
+  recurrence: ReminderRecurrence;
+  enabled: boolean;
+  next_fire_at: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ReminderFireLogDto = {
+  id: string;
+  reminder_id: string;
+  family_id: string;
+  scheduled_at: string;
+  fired_at: string;
+  title: string;
+};
+
+export type UserNotificationDto = {
+  id: string;
+  family_id: string;
+  reminder_id: string | null;
+  title: string;
+  body: string | null;
+  created_at: string;
+  read_at: string | null;
+};

@@ -1,6 +1,7 @@
 import os
 
 # Local dev: avoid requiring Postgres for pytest. GitHub Actions sets CI=true and DATABASE_URL.
+os.environ["REMINDER_SCHEDULER_ENABLED"] = "false"
 if os.getenv("CI") != "true":
     os.environ["DATABASE_URL"] = "sqlite+pysqlite://"
 
@@ -16,6 +17,7 @@ def reset_database():
     from homehub.modules.auth import models as auth_models  # noqa: F401
     from homehub.modules.families import models as families_models  # noqa: F401
     from homehub.modules.groceries import models as groceries_models  # noqa: F401
+    from homehub.modules.reminders import models as reminders_models  # noqa: F401
     from homehub.modules.sync import models as sync_models  # noqa: F401
 
     Base.metadata.drop_all(bind=engine)
