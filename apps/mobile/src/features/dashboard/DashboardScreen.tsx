@@ -9,9 +9,10 @@ import { modulesForRole } from './dashboardModules';
 type Props = {
   membership: FamilyMembershipSummary;
   onOpenGroceries: () => void;
+  onOpenReminders: () => void;
 };
 
-export function DashboardScreen({ membership, onOpenGroceries }: Props) {
+export function DashboardScreen({ membership, onOpenGroceries, onOpenReminders }: Props) {
   const { user, signOut } = useAuth();
   const modules = modulesForRole(membership.role);
 
@@ -27,14 +28,22 @@ export function DashboardScreen({ membership, onOpenGroceries }: Props) {
         keyExtractor={item => item.id}
         renderItem={({ item }) => {
           const isGroceries = item.id === 'groceries';
+          const isReminders = item.id === 'reminders';
+          const wired = isGroceries || isReminders;
           return (
             <Pressable
               style={styles.card}
-              disabled={!isGroceries}
-              onPress={isGroceries ? onOpenGroceries : undefined}>
+              disabled={!wired}
+              onPress={
+                isGroceries ? onOpenGroceries : isReminders ? onOpenReminders : undefined
+              }>
               <Text style={styles.cardTitle}>{item.title}</Text>
               <Text style={styles.cardMeta}>
-                {isGroceries ? 'Tap to open (offline sync)' : 'Coming in a later milestone'}
+                {isGroceries
+                  ? 'Tap to open (offline sync)'
+                  : isReminders
+                    ? 'Tap to open (server scheduler)'
+                    : 'Coming in a later milestone'}
               </Text>
             </Pressable>
           );

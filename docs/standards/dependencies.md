@@ -16,6 +16,7 @@ See also [architecture.md §9](../architecture.md).
 | psycopg (or asyncpg) | PostgreSQL driver |
 | PyJWT + bcrypt | Access tokens and password hashing |
 | httpx | Outbound HTTP (OAuth, webhooks) |
+| APScheduler | In-process reminder scheduler (M4, ADR-006) |
 | Ruff | Lint + format |
 | PyJWT | Access tokens |
 | bcrypt | Password hashing |

@@ -1,5 +1,13 @@
 /** HTTP client for auth and family onboarding (sync lives in syncApi.ts). */
-import type { ApiErrorResponse, TokenResponse, UserResponse } from '@homehub/shared';
+import type {
+  ApiErrorResponse,
+  ReminderDto,
+  ReminderFireLogDto,
+  ReminderRecurrence,
+  TokenResponse,
+  UserNotificationDto,
+  UserResponse,
+} from '@homehub/shared';
 
 import { API_BASE_URL } from '../config/api';
 import { getAccessToken } from './tokenStorage';
@@ -79,5 +87,58 @@ export async function joinFamily(inviteCode: string) {
     method: 'POST',
     auth: true,
     body: JSON.stringify({ invite_code: inviteCode }),
+  });
+}
+
+export async function registerDeviceToken(platform: 'android' | 'ios', token: string): Promise<void> {
+  await request<void>('/api/v1/auth/device-token', {
+    method: 'PUT',
+    auth: true,
+    body: JSON.stringify({ platform, token }),
+  });
+}
+
+export async function fetchReminders(familyId: string): Promise<ReminderDto[]> {
+  return request<ReminderDto[]>(`/api/v1/families/${familyId}/reminders`, { auth: true });
+}
+
+export async function createReminder(
+  familyId: string,
+  payload: {
+    title: string;
+    body?: string;
+    recurrence: ReminderRecurrence;
+    next_fire_at: string;
+  },
+): Promise<ReminderDto> {
+  return request<ReminderDto>(`/api/v1/families/${familyId}/reminders`, {
+    method: 'POST',
+    auth: true,
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteReminder(familyId: string, reminderId: string): Promise<void> {
+  await request<void>(`/api/v1/families/${familyId}/reminders/${reminderId}`, {
+    method: 'DELETE',
+    auth: true,
+  });
+}
+
+export async function fetchReminderHistory(familyId: string): Promise<ReminderFireLogDto[]> {
+  return request<ReminderFireLogDto[]>(`/api/v1/families/${familyId}/reminders/history`, {
+    auth: true,
+  });
+}
+
+export async function fetchNotifications(since?: string): Promise<UserNotificationDto[]> {
+  const query = since ? `?since=${encodeURIComponent(since)}` : '';
+  return request<UserNotificationDto[]>(`/api/v1/notifications${query}`, { auth: true });
+}
+
+export async function markNotificationRead(notificationId: string): Promise<UserNotificationDto> {
+  return request<UserNotificationDto>(`/api/v1/notifications/${notificationId}/read`, {
+    method: 'PATCH',
+    auth: true,
   });
 }
