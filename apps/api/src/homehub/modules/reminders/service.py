@@ -116,6 +116,47 @@ class RemindersService:
             row.read_at = datetime.now(UTC)
         return self._to_notification_response(row)
 
+    def sync_maintenance_due_reminder(
+        self,
+        *,
+        family_id: UUID,
+        created_by: UUID,
+        existing_reminder_id: UUID | None,
+        title: str,
+        body: str | None,
+        due_at: datetime | None,
+    ) -> UUID | None:
+        """Create/update/disable a one-time reminder tied to a maintenance due date."""
+        if due_at is None:
+            if existing_reminder_id is not None:
+                row = self._repo.get_by_id(existing_reminder_id, family_id)
+                if row is not None and row.deleted_at is None:
+                    row.enabled = False
+            return existing_reminder_id
+
+        due_at = self._ensure_aware_utc(due_at)
+        if existing_reminder_id is not None:
+            row = self._repo.get_by_id(existing_reminder_id, family_id)
+            if row is not None and row.deleted_at is None:
+                row.title = title
+                row.body = body
+                row.recurrence = RecurrenceKind.ONE_TIME
+                row.next_fire_at = due_at
+                row.enabled = True
+                return row.id
+
+        row = self._repo.create(
+            uuid4(),
+            family_id,
+            title,
+            body,
+            None,
+            RecurrenceKind.ONE_TIME,
+            due_at,
+            created_by,
+        )
+        return row.id
+
     def process_due_reminders(self, now: datetime) -> int:
         """Fire all due reminders; called by the background scheduler."""
         now = self._ensure_aware_utc(now)

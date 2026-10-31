@@ -1,4 +1,4 @@
-/** Role-based dashboard placeholders; groceries and reminders wired in M2/M4. */
+/** Role-based dashboard placeholders; groceries, reminders, and maintenance wired. */
 import type { FamilyRole } from '@homehub/shared';
 
 export type DashboardModule = {

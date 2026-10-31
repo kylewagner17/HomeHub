@@ -1,6 +1,9 @@
 /** HTTP client for auth and family onboarding (sync lives in syncApi.ts). */
 import type {
   ApiErrorResponse,
+  MaintenanceCategory,
+  MaintenanceCompletionDto,
+  MaintenanceItemDto,
   ReminderDto,
   ReminderFireLogDto,
   ReminderRecurrence,
@@ -141,4 +144,69 @@ export async function markNotificationRead(notificationId: string): Promise<User
     method: 'PATCH',
     auth: true,
   });
+}
+
+export async function fetchMaintenanceItems(
+  familyId: string,
+  category: MaintenanceCategory,
+): Promise<MaintenanceItemDto[]> {
+  return request<MaintenanceItemDto[]>(
+    `/api/v1/families/${familyId}/maintenance/items?category=${category}`,
+    { auth: true },
+  );
+}
+
+export async function createMaintenanceItem(
+  familyId: string,
+  payload: Record<string, unknown>,
+): Promise<MaintenanceItemDto> {
+  return request<MaintenanceItemDto>(`/api/v1/families/${familyId}/maintenance/items`, {
+    method: 'POST',
+    auth: true,
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function completeMaintenanceItem(
+  familyId: string,
+  itemId: string,
+  payload: Record<string, unknown>,
+): Promise<MaintenanceItemDto> {
+  return request<MaintenanceItemDto>(
+    `/api/v1/families/${familyId}/maintenance/items/${itemId}/complete`,
+    {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function deleteMaintenanceItem(familyId: string, itemId: string): Promise<void> {
+  await request<void>(`/api/v1/families/${familyId}/maintenance/items/${itemId}`, {
+    method: 'DELETE',
+    auth: true,
+  });
+}
+
+export async function fetchMaintenanceHistory(familyId: string): Promise<MaintenanceCompletionDto[]> {
+  return request<MaintenanceCompletionDto[]>(
+    `/api/v1/families/${familyId}/maintenance/history`,
+    { auth: true },
+  );
+}
+
+export async function setMaintenanceStockStatus(
+  familyId: string,
+  itemId: string,
+  stockStatus: import('@homehub/shared').StockStatus,
+): Promise<MaintenanceItemDto> {
+  return request<MaintenanceItemDto>(
+    `/api/v1/families/${familyId}/maintenance/items/${itemId}/stock`,
+    {
+      method: 'PATCH',
+      auth: true,
+      body: JSON.stringify({ stock_status: stockStatus }),
+    },
+  );
 }

@@ -19,6 +19,10 @@ class GroceryListsRepository:
     def __init__(self, session: Session) -> None:
         self._session = session
 
+    @property
+    def session(self) -> Session:
+        return self._session
+
     # --- lists ---
 
     def get_list_by_id(self, list_id: UUID, family_id: UUID) -> GroceryList | None:
@@ -115,6 +119,8 @@ class GroceryListsRepository:
         checked: bool,
         staple_id: UUID | None,
         revision: int,
+        maintenance_item_id: UUID | None = None,
+        urgent_out: bool = False,
     ) -> GroceryListItem:
         row = GroceryListItem(
             id=item_id,
@@ -124,6 +130,8 @@ class GroceryListsRepository:
             quantity=quantity,
             checked=checked,
             staple_id=staple_id,
+            maintenance_item_id=maintenance_item_id,
+            urgent_out=urgent_out,
             revision=revision,
             updated_at=datetime.now(UTC),
         )

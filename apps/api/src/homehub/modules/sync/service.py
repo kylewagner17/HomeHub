@@ -9,6 +9,8 @@ from homehub.modules.families.repository import FamiliesRepository
 from homehub.modules.groceries.quantity import add_quantities
 from homehub.modules.groceries.repository import GroceryListsRepository
 from homehub.modules.groceries.service import GroceryListsService
+from homehub.modules.maintenance.consumable_grocery import reset_consumable_after_grocery_checkoff
+from homehub.modules.maintenance.repository import MaintenanceRepository
 from homehub.modules.sync.repository import SyncRepository
 from homehub.modules.sync.schemas import (
     SyncEntityType,
@@ -250,6 +252,7 @@ class SyncService:
                 existing.quantity = add_quantities(existing.quantity, quantity)
                 existing.checked = checked
                 existing.revision = max(existing.revision + 1, mutation.data.revision)
+                self._maybe_reset_consumable_stock(existing, checked, family_id)
                 self._repo.save_item(existing)
                 self._sync_repo.record_applied(mutation.idempotency_key, family_id)
                 return SyncPushResult(
@@ -292,6 +295,7 @@ class SyncService:
         row.revision = max(mutation.data.revision, row.revision)
         if row.deleted_at is not None:
             row.deleted_at = None
+        self._maybe_reset_consumable_stock(row, checked, family_id)
         self._repo.save_item(row)
         self._sync_repo.record_applied(mutation.idempotency_key, family_id)
         return SyncPushResult(
@@ -485,6 +489,16 @@ class SyncService:
             status="applied",
             entity_type=entity_type,
             **{response_field: to_response(row)},
+        )
+
+    def _maybe_reset_consumable_stock(self, row, checked: bool, family_id: UUID) -> None:
+        if not checked or row.maintenance_item_id is None:
+            return
+        reset_consumable_after_grocery_checkoff(
+            self._repo,
+            MaintenanceRepository(self._repo.session),
+            family_id,
+            row.maintenance_item_id,
         )
 
     def _require_member(self, user_id: UUID, family_id: UUID) -> None:

@@ -125,6 +125,8 @@ class GroceryListsService:
             quantity=row.quantity,
             checked=row.checked,
             staple_id=row.staple_id,
+            maintenance_item_id=row.maintenance_item_id,
+            urgent_out=row.urgent_out,
             revision=row.revision,
             updated_at=row.updated_at,
             deleted_at=row.deleted_at,

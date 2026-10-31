@@ -375,6 +375,8 @@ Order emphasizes **foundation → auth/family → vertical slices**; mobile and 
 
 **Acceptance:** Filter/oil-style interval produces correct next due date after completion.
 
+**Status:** Implemented. See [ADR-007](adr/007-maintenance-m5.md). Home/Auto tabs, typed fields, completion history, linked one-time reminders.
+
 ### M6 — Calendar + import
 
 - Internal events, personal/family visibility, user-triggered Google/Outlook import (non-destructive, dedupe), import/export.

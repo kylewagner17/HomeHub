@@ -7,4 +7,5 @@ export type MainStackParamList = {
   GroceryLists: undefined;
   GroceryListDetail: { listId: string };
   Reminders: undefined;
+  Maintenance: undefined;
 };

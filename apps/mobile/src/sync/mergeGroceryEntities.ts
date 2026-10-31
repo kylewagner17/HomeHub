@@ -15,6 +15,8 @@ export type LocalGroceryListItem = RevisionEntity & {
   quantity: string;
   checked: boolean;
   stapleId: string | null;
+  maintenanceItemId: string | null;
+  urgentOut: boolean;
 };
 
 export type LocalGroceryStaple = RevisionEntity & {
@@ -77,6 +79,8 @@ function dtoToLocalItem(server: GroceryListItemDto): LocalGroceryListItem {
     quantity: server.quantity,
     checked: server.checked,
     stapleId: server.staple_id,
+    maintenanceItemId: server.maintenance_item_id,
+    urgentOut: server.urgent_out,
     revision: server.revision,
     updatedAt: server.updated_at,
     deleted: server.deleted_at !== null,

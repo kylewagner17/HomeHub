@@ -19,6 +19,7 @@ from homehub.db.session import (
 from homehub.modules.auth.router import router as auth_router
 from homehub.modules.families.router import router as families_router
 from homehub.modules.groceries.router import router as groceries_lists_router
+from homehub.modules.maintenance.router import router as maintenance_router
 from homehub.modules.reminders.router import notifications_router, reminders_router
 from homehub.modules.sync.router import router as sync_router
 from homehub.schemas.health import HealthResponse
@@ -51,6 +52,7 @@ app.include_router(families_router, prefix=API_PREFIX)
 app.include_router(groceries_lists_router, prefix=API_PREFIX)
 app.include_router(reminders_router, prefix=API_PREFIX)
 app.include_router(notifications_router, prefix=API_PREFIX)
+app.include_router(maintenance_router, prefix=API_PREFIX)
 app.include_router(sync_router, prefix=API_PREFIX)
 
 

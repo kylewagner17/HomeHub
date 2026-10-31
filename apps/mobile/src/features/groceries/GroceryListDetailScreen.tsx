@@ -307,7 +307,12 @@ export function GroceryListDetailScreen({ membership, listId, onBack }: Props) {
 
           const nameBlock = (
             <>
-              <Text style={[styles.cardTitle, item.checked && styles.checked]}>
+              <Text
+                style={[
+                  styles.cardTitle,
+                  item.checked && styles.checked,
+                  item.urgentOut && !item.checked && styles.urgentOut,
+                ]}>
                 {item.checked ? '✓ ' : ''}
                 {item.name}
               </Text>
@@ -352,7 +357,12 @@ export function GroceryListDetailScreen({ membership, listId, onBack }: Props) {
                   </Pressable>
                 ) : (
                   <View style={styles.itemMain}>
-                    <Text style={[styles.cardTitle, item.checked && styles.checked]}>
+                    <Text
+                      style={[
+                        styles.cardTitle,
+                        item.checked && styles.checked,
+                        item.urgentOut && !item.checked && styles.urgentOut,
+                      ]}>
                       {item.name}
                     </Text>
                     <View style={styles.editItemRow}>
@@ -476,5 +486,6 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 16 },
   cardMeta: { fontSize: 13, color: '#555', marginTop: 2 },
   checked: { textDecorationLine: 'line-through', color: '#666' },
+  urgentOut: { color: '#b00020', fontWeight: '600' },
   empty: { textAlign: 'center', color: '#888', marginTop: 16 },
 });
