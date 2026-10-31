@@ -9,6 +9,7 @@ import { RegisterScreen } from '../features/auth/screens/RegisterScreen';
 import { DashboardScreen } from '../features/dashboard/DashboardScreen';
 import { GroceryListDetailScreen } from '../features/groceries/GroceryListDetailScreen';
 import { GroceryListsScreen } from '../features/groceries/GroceryListsScreen';
+import { MaintenanceScreen } from '../features/maintenance/MaintenanceScreen';
 import { RemindersScreen } from '../features/reminders/RemindersScreen';
 import { OnboardingScreen } from '../features/families/screens/OnboardingScreen';
 import type { AuthStackParamList, MainStackParamList } from './types';
@@ -25,6 +26,7 @@ function MainApp({ membership }: { membership: NonNullable<ReturnType<typeof use
             membership={membership}
             onOpenGroceries={() => navigation.navigate('GroceryLists')}
             onOpenReminders={() => navigation.navigate('Reminders')}
+            onOpenMaintenance={() => navigation.navigate('Maintenance')}
           />
         )}
       </MainStack.Screen>
@@ -49,6 +51,11 @@ function MainApp({ membership }: { membership: NonNullable<ReturnType<typeof use
       <MainStack.Screen name="Reminders">
         {({ navigation }) => (
           <RemindersScreen membership={membership} onBack={() => navigation.goBack()} />
+        )}
+      </MainStack.Screen>
+      <MainStack.Screen name="Maintenance">
+        {({ navigation }) => (
+          <MaintenanceScreen membership={membership} onBack={() => navigation.goBack()} />
         )}
       </MainStack.Screen>
     </MainStack.Navigator>

@@ -15,6 +15,8 @@ function itemFromRow(row: Record<string, unknown>): LocalGroceryListItem {
     quantity: String(row.quantity),
     checked: Number(row.checked) === 1,
     stapleId: row.staple_id ? String(row.staple_id) : null,
+    maintenanceItemId: row.maintenance_item_id ? String(row.maintenance_item_id) : null,
+    urgentOut: Number(row.urgent_out ?? 0) === 1,
     revision: Number(row.revision),
     updatedAt: String(row.updated_at),
     deleted: Number(row.deleted) === 1,
@@ -41,14 +43,16 @@ export function upsertLocalListItem(item: LocalGroceryListItem): void {
   const db = getDatabase();
   db.execute(
     `INSERT INTO grocery_list_items
-     (id, list_id, family_id, name, quantity, checked, staple_id, revision, updated_at, deleted)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     (id, list_id, family_id, name, quantity, checked, staple_id, maintenance_item_id, urgent_out, revision, updated_at, deleted)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET
        list_id = excluded.list_id,
        name = excluded.name,
        quantity = excluded.quantity,
        checked = excluded.checked,
        staple_id = excluded.staple_id,
+       maintenance_item_id = excluded.maintenance_item_id,
+       urgent_out = excluded.urgent_out,
        revision = excluded.revision,
        updated_at = excluded.updated_at,
        deleted = excluded.deleted`,
@@ -60,6 +64,8 @@ export function upsertLocalListItem(item: LocalGroceryListItem): void {
       item.quantity,
       item.checked ? 1 : 0,
       item.stapleId,
+      item.maintenanceItemId,
+      item.urgentOut ? 1 : 0,
       item.revision,
       item.updatedAt,
       item.deleted ? 1 : 0,

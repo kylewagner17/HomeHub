@@ -10,9 +10,15 @@ type Props = {
   membership: FamilyMembershipSummary;
   onOpenGroceries: () => void;
   onOpenReminders: () => void;
+  onOpenMaintenance: () => void;
 };
 
-export function DashboardScreen({ membership, onOpenGroceries, onOpenReminders }: Props) {
+export function DashboardScreen({
+  membership,
+  onOpenGroceries,
+  onOpenReminders,
+  onOpenMaintenance,
+}: Props) {
   const { user, signOut } = useAuth();
   const modules = modulesForRole(membership.role);
 
@@ -29,13 +35,20 @@ export function DashboardScreen({ membership, onOpenGroceries, onOpenReminders }
         renderItem={({ item }) => {
           const isGroceries = item.id === 'groceries';
           const isReminders = item.id === 'reminders';
-          const wired = isGroceries || isReminders;
+          const isMaintenance = item.id === 'maintenance';
+          const wired = isGroceries || isReminders || isMaintenance;
           return (
             <Pressable
               style={styles.card}
               disabled={!wired}
               onPress={
-                isGroceries ? onOpenGroceries : isReminders ? onOpenReminders : undefined
+                isGroceries
+                  ? onOpenGroceries
+                  : isReminders
+                    ? onOpenReminders
+                    : isMaintenance
+                      ? onOpenMaintenance
+                      : undefined
               }>
               <Text style={styles.cardTitle}>{item.title}</Text>
               <Text style={styles.cardMeta}>
@@ -43,7 +56,9 @@ export function DashboardScreen({ membership, onOpenGroceries, onOpenReminders }
                   ? 'Tap to open (offline sync)'
                   : isReminders
                     ? 'Tap to open (server scheduler)'
-                    : 'Coming in a later milestone'}
+                    : isMaintenance
+                      ? 'Tap to open (home & auto)'
+                      : 'Coming in a later milestone'}
               </Text>
             </Pressable>
           );

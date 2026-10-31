@@ -1,5 +1,10 @@
 /** Local SQLite schema for offline groceries and sync metadata (M3). */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 5;
+
+export const MIGRATE_V3_TO_V4 = `
+ALTER TABLE grocery_list_items ADD COLUMN maintenance_item_id TEXT;
+ALTER TABLE grocery_list_items ADD COLUMN urgent_out INTEGER NOT NULL DEFAULT 0;
+`;
 
 export const MIGRATE_V2_TO_V3 = `
 ALTER TABLE grocery_stores ADD COLUMN external_provider TEXT;

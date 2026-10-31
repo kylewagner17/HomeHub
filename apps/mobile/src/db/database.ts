@@ -1,7 +1,14 @@
 /** Singleton SQLite handle with versioned migrations (M3). */
 import { open } from '@op-engineering/op-sqlite';
 
-import { CREATE_TABLES_V1, MIGRATE_V1_TO_V2, MIGRATE_V2_TO_V3, SCHEMA_VERSION } from './schema';
+import { migrateLegacyEntityIds } from './migrateLegacyEntityIds';
+import {
+  CREATE_TABLES_V1,
+  MIGRATE_V1_TO_V2,
+  MIGRATE_V2_TO_V3,
+  MIGRATE_V3_TO_V4,
+  SCHEMA_VERSION,
+} from './schema';
 
 let dbInstance: ReturnType<typeof open> | null = null;
 
@@ -32,6 +39,16 @@ function applyMigrations(db: ReturnType<typeof open>): void {
   }
   if (version < 3) {
     runStatements(db, MIGRATE_V2_TO_V3);
+    db.executeSync('UPDATE schema_version SET version = ?', [3]);
+    version = 3;
+  }
+  if (version < 4) {
+    runStatements(db, MIGRATE_V3_TO_V4);
+    db.executeSync('UPDATE schema_version SET version = ?', [4]);
+    version = 4;
+  }
+  if (version < 5) {
+    migrateLegacyEntityIds(db);
     db.executeSync('UPDATE schema_version SET version = ?', [SCHEMA_VERSION]);
   }
 }

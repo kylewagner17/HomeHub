@@ -96,6 +96,13 @@ class GroceryListItem(Base):
     staple_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("grocery_staples.id", ondelete="SET NULL"), nullable=True
     )
+    maintenance_item_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("maintenance_items.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
+    urgent_out: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     revision: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False

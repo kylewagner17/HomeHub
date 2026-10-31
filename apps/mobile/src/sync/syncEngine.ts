@@ -40,11 +40,8 @@ import {
   mergeServerStorePrice,
 } from './mergeGroceryEntities';
 import { mergeServerList } from './mergeGroceryList';
+import { newEntityId } from './entityId';
 import { syncPull, syncPush } from './syncApi';
-
-function newId(prefix: string): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
 
 function applyPushResult(result: SyncPushResultDto): void {
   if (result.entity) {
@@ -65,22 +62,27 @@ function applyPushResult(result: SyncPushResultDto): void {
 }
 
 export async function runSync(familyId: string): Promise<{ status: 'ok' | 'error'; message?: string }> {
+  let pushError: string | undefined;
   try {
     const outbox = listOutbox(familyId);
     const clearedKeys: string[] = [];
 
     if (outbox.length > 0) {
-      const pushResult = await syncPush(familyId, outbox);
-      for (const result of pushResult.results) {
-        if (result.status === 'applied' || result.status === 'duplicate') {
-          clearedKeys.push(result.idempotency_key);
+      try {
+        const pushResult = await syncPush(familyId, outbox);
+        for (const result of pushResult.results) {
+          if (result.status === 'applied' || result.status === 'duplicate') {
+            clearedKeys.push(result.idempotency_key);
+          }
+          applyPushResult(result);
+          if (result.status === 'conflict') {
+            clearedKeys.push(result.idempotency_key);
+          }
         }
-        applyPushResult(result);
-        if (result.status === 'conflict') {
-          clearedKeys.push(result.idempotency_key);
-        }
+        removeOutboxKeys(clearedKeys);
+      } catch {
+        pushError = 'Some changes could not upload — will retry';
       }
-      removeOutboxKeys(clearedKeys);
     }
 
     const since = getLastPullSince(familyId);
@@ -101,6 +103,9 @@ export async function runSync(familyId: string): Promise<{ status: 'ok' | 'error
       applyServerStorePrice(price);
     }
     setLastPullSince(familyId, pullResult.server_time);
+    if (pushError) {
+      return { status: 'error', message: pushError };
+    }
     return { status: 'ok' };
   } catch {
     return { status: 'error', message: 'Sync failed — changes stay queued offline' };
@@ -165,7 +170,7 @@ export function queueGroceryListUpsert(
 }
 
 export function createLocalGroceryList(familyId: string, name: string): string {
-  const listId = newId('list');
+  const listId = newEntityId();
   queueGroceryListUpsert(familyId, listId, name.trim(), 1);
   return listId;
 }
@@ -208,6 +213,8 @@ export function queueListItemUpsert(
     quantity,
     checked,
     stapleId: null,
+    maintenanceItemId: null,
+    urgentOut: false,
     revision,
     updatedAt: now,
     deleted: false,
@@ -234,7 +241,7 @@ export function addLocalListItem(familyId: string, listId: string, name: string)
     );
     return existing.id;
   }
-  const itemId = newId('item');
+  const itemId = newEntityId();
   queueListItemUpsert(familyId, listId, itemId, trimmed, '1', false, 1);
   return itemId;
 }
@@ -277,7 +284,7 @@ export function setLocalStorePrice(
   const existing = listLocalPricesForStore(storeId).find(
     p => p.itemName.toLowerCase() === itemName.trim().toLowerCase(),
   );
-  const priceId = existing?.id ?? newId('price');
+  const priceId = existing?.id ?? newEntityId();
   const revision = (existing?.revision ?? 0) + 1;
   const mutation: OutboxMutation = {
     idempotency_key: `${priceId}-${revision}-${Date.now()}`,
@@ -397,7 +404,7 @@ export function toggleLocalListItem(familyId: string, itemId: string): void {
 }
 
 export function createLocalStore(familyId: string, name: string): string {
-  const storeId = newId('store');
+  const storeId = newEntityId();
   const mutation: OutboxMutation = {
     idempotency_key: `${storeId}-1-${Date.now()}`,
     entity_type: 'grocery_store',
@@ -422,7 +429,7 @@ export function createLocalStore(familyId: string, name: string): string {
 }
 
 export function createLocalStaple(familyId: string, name: string): string {
-  const stapleId = newId('staple');
+  const stapleId = newEntityId();
   const mutation: OutboxMutation = {
     idempotency_key: `${stapleId}-1-${Date.now()}`,
     entity_type: 'grocery_staple',

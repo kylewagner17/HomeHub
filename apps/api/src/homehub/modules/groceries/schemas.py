@@ -22,6 +22,8 @@ class GroceryListItemResponse(BaseModel):
     quantity: str
     checked: bool
     staple_id: UUID | None = None
+    maintenance_item_id: UUID | None = None
+    urgent_out: bool = False
     revision: int
     updated_at: datetime
     deleted_at: datetime | None = None

@@ -60,6 +60,8 @@ export type GroceryListItemDto = {
   quantity: string;
   checked: boolean;
   staple_id: string | null;
+  maintenance_item_id: string | null;
+  urgent_out: boolean;
   revision: number;
   updated_at: string;
   deleted_at: string | null;
@@ -166,4 +168,53 @@ export type UserNotificationDto = {
   body: string | null;
   created_at: string;
   read_at: string | null;
+};
+
+export type MaintenanceCategory = 'home' | 'auto' | 'items';
+
+export type StockStatus = 'in_stock' | 'low' | 'out';
+
+export type MaintenanceItemKind =
+  | 'hvac_filter'
+  | 'water_filter'
+  | 'smoke_detector'
+  | 'generic_home'
+  | 'oil_change'
+  | 'tire_rotation'
+  | 'generic_auto'
+  | 'consumable';
+
+export type MaintenanceItemDto = {
+  id: string;
+  family_id: string;
+  category: MaintenanceCategory;
+  item_kind: MaintenanceItemKind;
+  title: string;
+  notes: string | null;
+  last_completed_at: string | null;
+  next_due_at: string | null;
+  interval_days: number | null;
+  interval_miles: number | null;
+  mileage_at_last_service: number | null;
+  previous_service_mileage: number | null;
+  next_due_mileage: number | null;
+  current_mileage: number | null;
+  reminder_id: string | null;
+  stock_status: StockStatus | null;
+  overdue: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MaintenanceCompletionDto = {
+  id: string;
+  item_id: string;
+  family_id: string;
+  completed_at: string;
+  mileage_at_completion: number | null;
+  previous_service_mileage: number | null;
+  next_due_at: string | null;
+  next_due_mileage: number | null;
+  notes: string | null;
+  created_at: string;
 };
