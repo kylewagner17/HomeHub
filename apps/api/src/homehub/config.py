@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     fcm_server_key: str | None = None
     reminder_scheduler_enabled: bool = True
     reminder_scheduler_interval_seconds: int = 60
+    google_oauth_client_id: str | None = None
+    google_oauth_client_secret: str | None = None
 
 
 _settings: Settings | None = None

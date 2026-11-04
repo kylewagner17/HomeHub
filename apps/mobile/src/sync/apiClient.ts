@@ -1,6 +1,11 @@
 /** HTTP client for auth and family onboarding (sync lives in syncApi.ts). */
 import type {
   ApiErrorResponse,
+  CalendarEventDto,
+  CalendarImportResultDto,
+  CalendarVisibility,
+  GoogleConnectionStatusDto,
+  FamilyMemberDto,
   MaintenanceCategory,
   MaintenanceCompletionDto,
   MaintenanceItemDto,
@@ -209,4 +214,99 @@ export async function setMaintenanceStockStatus(
       body: JSON.stringify({ stock_status: stockStatus }),
     },
   );
+}
+
+export async function fetchFamilyMembers(familyId: string): Promise<FamilyMemberDto[]> {
+  return request<FamilyMemberDto[]>(`/api/v1/families/${familyId}/members`, { auth: true });
+}
+
+export async function fetchCalendarEvents(
+  familyId: string,
+  rangeStart: string,
+  rangeEnd: string,
+): Promise<CalendarEventDto[]> {
+  const params = new URLSearchParams({ start: rangeStart, end: rangeEnd });
+  return request<CalendarEventDto[]>(
+    `/api/v1/families/${familyId}/calendar/events?${params.toString()}`,
+    { auth: true },
+  );
+}
+
+export async function createCalendarEvent(
+  familyId: string,
+  payload: {
+    title: string;
+    description?: string;
+    location?: string;
+    starts_at: string;
+    ends_at: string;
+    all_day?: boolean;
+    visibility?: CalendarVisibility;
+  },
+): Promise<CalendarEventDto> {
+  return request<CalendarEventDto>(`/api/v1/families/${familyId}/calendar/events`, {
+    method: 'POST',
+    auth: true,
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateCalendarEvent(
+  familyId: string,
+  eventId: string,
+  payload: Partial<{
+    title: string;
+    starts_at: string;
+    ends_at: string;
+    visibility: CalendarVisibility;
+  }>,
+): Promise<CalendarEventDto> {
+  return request<CalendarEventDto>(
+    `/api/v1/families/${familyId}/calendar/events/${eventId}`,
+    {
+      method: 'PATCH',
+      auth: true,
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export async function deleteCalendarEvent(familyId: string, eventId: string): Promise<void> {
+  await request<void>(`/api/v1/families/${familyId}/calendar/events/${eventId}`, {
+    method: 'DELETE',
+    auth: true,
+  });
+}
+
+export async function importCalendarIcs(
+  familyId: string,
+  icsText: string,
+): Promise<CalendarImportResultDto> {
+  return request<CalendarImportResultDto>(
+    `/api/v1/families/${familyId}/calendar/import/ical`,
+    {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ ics_text: icsText }),
+    },
+  );
+}
+
+export async function importCalendarGoogle(
+  familyId: string,
+  timeMin: string,
+  timeMax: string,
+): Promise<CalendarImportResultDto> {
+  return request<CalendarImportResultDto>(
+    `/api/v1/families/${familyId}/calendar/import/google`,
+    {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ time_min: timeMin, time_max: timeMax }),
+    },
+  );
+}
+
+export async function fetchGoogleCalendarStatus(): Promise<GoogleConnectionStatusDto> {
+  return request<GoogleConnectionStatusDto>('/api/v1/integrations/google/status', { auth: true });
 }

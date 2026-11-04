@@ -7,6 +7,7 @@ import {
   MIGRATE_V1_TO_V2,
   MIGRATE_V2_TO_V3,
   MIGRATE_V3_TO_V4,
+  MIGRATE_V5_TO_V6,
   SCHEMA_VERSION,
 } from './schema';
 
@@ -49,6 +50,11 @@ function applyMigrations(db: ReturnType<typeof open>): void {
   }
   if (version < 5) {
     migrateLegacyEntityIds(db);
+    db.executeSync('UPDATE schema_version SET version = ?', [5]);
+    version = 5;
+  }
+  if (version < 6) {
+    runStatements(db, MIGRATE_V5_TO_V6);
     db.executeSync('UPDATE schema_version SET version = ?', [SCHEMA_VERSION]);
   }
 }
