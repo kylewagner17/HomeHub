@@ -1,5 +1,17 @@
 /** Local SQLite schema for offline groceries and sync metadata (M3). */
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 6;
+
+export const MIGRATE_V5_TO_V6 = `
+CREATE TABLE IF NOT EXISTS calendar_ui_prefs (
+  family_id TEXT PRIMARY KEY NOT NULL,
+  prefs_json TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS calendar_event_kind_overrides (
+  event_id TEXT PRIMARY KEY NOT NULL,
+  kind TEXT NOT NULL
+);
+`;
 
 export const MIGRATE_V3_TO_V4 = `
 ALTER TABLE grocery_list_items ADD COLUMN maintenance_item_id TEXT;

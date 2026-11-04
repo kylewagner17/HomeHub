@@ -6,8 +6,10 @@ from sqlalchemy import engine_from_config, pool
 from homehub.config import get_settings
 from homehub.db.base import Base
 from homehub.modules.auth import models as auth_models  # noqa: F401
+from homehub.modules.calendar import models as calendar_models  # noqa: F401
 from homehub.modules.families import models as families_models  # noqa: F401
 from homehub.modules.groceries import models as groceries_models  # noqa: F401
+from homehub.modules.integrations import models as integrations_models  # noqa: F401
 from homehub.modules.sync import models as sync_models  # noqa: F401
 
 config = context.config

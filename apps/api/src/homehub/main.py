@@ -5,6 +5,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 
 from homehub import __version__
@@ -17,8 +18,10 @@ from homehub.db.session import (
     create_session_factory,
 )
 from homehub.modules.auth.router import router as auth_router
+from homehub.modules.calendar.router import router as calendar_router
 from homehub.modules.families.router import router as families_router
 from homehub.modules.groceries.router import router as groceries_lists_router
+from homehub.modules.integrations.router import router as integrations_router
 from homehub.modules.maintenance.router import router as maintenance_router
 from homehub.modules.reminders.router import notifications_router, reminders_router
 from homehub.modules.sync.router import router as sync_router
@@ -53,7 +56,46 @@ app.include_router(groceries_lists_router, prefix=API_PREFIX)
 app.include_router(reminders_router, prefix=API_PREFIX)
 app.include_router(notifications_router, prefix=API_PREFIX)
 app.include_router(maintenance_router, prefix=API_PREFIX)
+app.include_router(calendar_router, prefix=API_PREFIX)
+app.include_router(integrations_router, prefix=API_PREFIX)
 app.include_router(sync_router, prefix=API_PREFIX)
+
+
+def custom_openapi():
+    """Expose Bearer JWT in Swagger UI (Authorize button)."""
+    if app.openapi_schema:
+        return app.openapi_schema
+    schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        routes=app.routes,
+    )
+    schema.setdefault("components", {}).setdefault(
+        "securitySchemes",
+        {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "access_token from POST /api/v1/auth/login (paste token only).",
+            }
+        },
+    )
+    public_suffixes = ("/auth/register", "/auth/login")
+    for path, methods in schema.get("paths", {}).items():
+        if path in ("/health", "/"):
+            continue
+        for op in methods.values():
+            if not isinstance(op, dict):
+                continue
+            if any(path.endswith(suffix) for suffix in public_suffixes):
+                continue
+            op.setdefault("security", [{"BearerAuth": []}])
+    app.openapi_schema = schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
 
 
 @app.exception_handler(HomeHubError)

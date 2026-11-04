@@ -218,3 +218,42 @@ export type MaintenanceCompletionDto = {
   notes: string | null;
   created_at: string;
 };
+
+export type CalendarVisibility = 'personal' | 'family';
+
+export type CalendarEventDto = {
+  id: string;
+  family_id: string;
+  owner_user_id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  starts_at: string;
+  ends_at: string;
+  all_day: boolean;
+  timezone: string | null;
+  visibility: CalendarVisibility;
+  external_provider: string | null;
+  external_uid: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CalendarImportResultDto = {
+  imported: number;
+  skipped_duplicates: number;
+};
+
+export type GoogleConnectionStatusDto = {
+  connected: boolean;
+};
+
+export type FamilyMemberDto = {
+  user_id: string;
+  display_name: string;
+  email: string;
+  role: FamilyRole;
+};
+
+/** Display classification for calendar styling (mobile + optional API later). */
+export type CalendarEventKind = 'event' | 'meeting' | 'birthday' | 'task';

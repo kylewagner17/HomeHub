@@ -383,6 +383,8 @@ Order emphasizes **foundation → auth/family → vertical slices**; mobile and 
 
 **Acceptance:** Import adds only new events; existing events unchanged; iCal export/import path documented.
 
+**Status:** Implemented. See [ADR-008](adr/008-calendar-m6.md). CRUD + month/list UI; iCal import/export; Google Calendar via OAuth (httpx) when env configured.
+
 ### M7 — Planning (phased)
 
 - Wave 1: tasks/checklists; Wave 2: boards; Wave 3: extended planning — each wave has dashboard + role visibility.

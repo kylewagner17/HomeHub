@@ -8,4 +8,5 @@ export type MainStackParamList = {
   GroceryListDetail: { listId: string };
   Reminders: undefined;
   Maintenance: undefined;
+  Calendar: undefined;
 };
